@@ -47,6 +47,43 @@ th{position:sticky;top:0;background:#0f1730}
 .good{color:var(--good);font-weight:800}
 .bad{color:var(--bad);font-weight:800}
 
-@media(max-width:520px){
-  table{min-width:780px}
+/* ===== 모바일 카드형 보기 ===== */
+.cardList{ display:none; gap:10px; }
+.cardItem{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:12px;
+  background:#0f1730;
 }
+.cardTop{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  margin-bottom:8px;
+}
+.rankBadge{
+  font-weight:900; font-size:12px;
+  padding:6px 10px; border-radius:999px;
+  border:1px solid var(--line);
+  color:var(--muted);
+  white-space:nowrap;
+}
+.cardName{
+  font-size:16px; font-weight:900;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.cardMeta{ color:var(--muted); font-size:12px; line-height:1.55; }
+.pill{
+  display:inline-block; padding:4px 8px; border-radius:999px;
+  border:1px solid var(--line); font-size:12px; font-weight:900;
+  white-space:nowrap;
+}
+.pill.win{ color:var(--good); }
+.pill.loss{ color:var(--bad); }
+
+/* ✅ 반응형 핵심: 모바일에서는 표 숨기고 카드 보이기 */
+@media(max-width:720px){
+  .tableWrap{ display:none; }
+  .cardList{ display:flex; flex-direction:column; }
+  table{ min-width:0; }
+}
+
+
