@@ -260,3 +260,6 @@ document.querySelectorAll(".tab").forEach(btn=>{
 $("btnRefresh").addEventListener("click", loadAll);
 
 loadAll();
+setInterval(loadAll, 10000); // 10초마다 새로고침
+
+
