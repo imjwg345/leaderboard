@@ -3,10 +3,6 @@ import {
   getFirestore, collection, getDocs, query, where, orderBy, limit
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/*
-✅ firebaseConfig 넣는 곳
-Firebase 콘솔 → 프로젝트 설정 → 내 앱(웹 앱) → SDK 설정 및 구성 → config 복사
-*/
 const firebaseConfig = {
   apiKey: "AIzaSyCgyGWHWstnTbbOm8UmSMqtOdoNhoV7RvU",
   authDomain: "the-random-remastered.firebaseapp.com",
@@ -35,6 +31,13 @@ function fmtSec(x){
   const n = Number(x);
   if (!Number.isFinite(n) || n >= 1e9) return "-";
   return n.toFixed(2);
+}
+
+function medal(i){
+  if (i === 0) return "🥇";
+  if (i === 1) return "🥈";
+  if (i === 2) return "🥉";
+  return `#${i+1}`;
 }
 
 function kstTodayRange(){
@@ -70,6 +73,21 @@ function renderTbody(tbodyId, rows, makeRow, colSpan){
   rows.forEach((r, i) => tb.appendChild(makeRow(r, i)));
 }
 
+/* ✅ 카드 렌더링 */
+function renderCards(containerId, rows, makeCard){
+  const box = document.getElementById(containerId);
+  if (!box) return;
+  box.innerHTML = "";
+  if (!rows.length){
+    const div = document.createElement("div");
+    div.className = "cardItem";
+    div.innerHTML = `<div class="cardMeta">데이터 없음</div>`;
+    box.appendChild(div);
+    return;
+  }
+  rows.forEach((r, i) => box.appendChild(makeCard(r, i)));
+}
+
 async function loadOverallTop10(){
   const snap = await getDocs(collection(db, COL_PLAYERS));
   const rows = [];
@@ -102,6 +120,7 @@ async function loadOverallTop10(){
   $("statPlays").textContent = String(totalPlays);
   $("statWins").textContent = String(totalWins);
 
+  // PC 표
   renderTbody("overallTbody", top, (r,i)=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -113,6 +132,23 @@ async function loadOverallTop10(){
     `;
     return tr;
   }, 5);
+
+  // 모바일 카드
+  renderCards("overallCards", top, (r,i)=>{
+    const div = document.createElement("div");
+    div.className = "cardItem";
+    div.innerHTML = `
+      <div class="cardTop">
+        <span class="rankBadge">${medal(i)}</span>
+        <span class="cardName">${r.nickname}</span>
+      </div>
+      <div class="cardMeta">
+        최고 시도: <b>${r.best_attempts}회</b> · 최고 시간: <b>${fmtSec(r.best_time_sec)}s</b><br/>
+        승/판: <b>${r.wins}/${r.plays}</b>
+      </div>
+    `;
+    return div;
+  });
 }
 
 async function loadRecentLogs(){
@@ -145,6 +181,7 @@ async function loadRecentLogs(){
     ? (wins.reduce((a,b)=>a+b,0)/wins.length).toFixed(2)
     : "-";
 
+  // PC 표
   renderTbody("recentTbody", rows, (r)=>{
     const tr = document.createElement("tr");
     const isWin = String(r.result).toLowerCase() === "win";
@@ -158,6 +195,25 @@ async function loadRecentLogs(){
     `;
     return tr;
   }, 6);
+
+  // 모바일 카드
+  renderCards("recentCards", rows, (r)=>{
+    const div = document.createElement("div");
+    div.className = "cardItem";
+    const isWin = String(r.result).toLowerCase() === "win";
+    div.innerHTML = `
+      <div class="cardTop">
+        <span class="pill ${isWin ? "win" : "loss"}">${isWin ? "WIN" : "LOSS"}</span>
+        <span class="cardName">${r.name}</span>
+        <span class="rankBadge">${r.difficulty || "-"}</span>
+      </div>
+      <div class="cardMeta">
+        시도: <b>${r.attempts}</b> · 시간: <b>${isWin ? fmtSec(r.time_sec)+"s" : "-"}</b><br/>
+        ${r.time}
+      </div>
+    `;
+    return div;
+  });
 }
 
 async function loadTodayTop10(){
@@ -188,6 +244,7 @@ async function loadTodayTop10(){
   rows.sort((x,y)=> (x.best_attempts - y.best_attempts) || (x.best_time_sec - y.best_time_sec));
   const top = rows.slice(0,10);
 
+  // PC 표
   renderTbody("todayTbody", top, (r,i)=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -198,6 +255,22 @@ async function loadTodayTop10(){
     `;
     return tr;
   }, 4);
+
+  // 모바일 카드
+  renderCards("todayCards", top, (r,i)=>{
+    const div = document.createElement("div");
+    div.className = "cardItem";
+    div.innerHTML = `
+      <div class="cardTop">
+        <span class="rankBadge">${medal(i)}</span>
+        <span class="cardName">${r.nickname}</span>
+      </div>
+      <div class="cardMeta">
+        시도: <b>${r.best_attempts}회</b> · 시간: <b>${fmtSec(r.best_time_sec)}s</b>
+      </div>
+    `;
+    return div;
+  });
 }
 
 async function loadDifficultyTop(diff){
@@ -224,6 +297,7 @@ async function loadDifficultyTop(diff){
   rows.sort((x,y)=> (x.best_attempts - y.best_attempts) || (x.best_time_sec - y.best_time_sec));
   const top = rows.slice(0,10);
 
+  // PC 표
   renderTbody("diffTbody", top, (r,i)=>{
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -234,6 +308,23 @@ async function loadDifficultyTop(diff){
     `;
     return tr;
   }, 4);
+
+  // 모바일 카드
+  renderCards("diffCards", top, (r,i)=>{
+    const div = document.createElement("div");
+    div.className = "cardItem";
+    div.innerHTML = `
+      <div class="cardTop">
+        <span class="rankBadge">${medal(i)}</span>
+        <span class="cardName">${r.nickname}</span>
+        <span class="rankBadge">${diff}</span>
+      </div>
+      <div class="cardMeta">
+        시도: <b>${r.best_attempts}회</b> · 시간: <b>${fmtSec(r.best_time_sec)}s</b>
+      </div>
+    `;
+    return div;
+  });
 }
 
 async function loadAll(){
@@ -260,6 +351,5 @@ document.querySelectorAll(".tab").forEach(btn=>{
 $("btnRefresh").addEventListener("click", loadAll);
 
 loadAll();
-setInterval(loadAll, 10000); // 10초마다 새로고침
-
+setInterval(loadAll, 10000); // ✅ 10초마다 자동 새로고침
 
