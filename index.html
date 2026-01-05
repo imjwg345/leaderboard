@@ -63,6 +63,8 @@
         <h2>📅 오늘 TOP 10</h2>
         <span class="badge" id="todayDate">-</span>
       </div>
+
+      <!-- PC: 표 -->
       <div class="tableWrap">
         <table>
           <thead>
@@ -78,6 +80,10 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Mobile: 카드 -->
+      <div class="cardList" id="todayCards"></div>
+
       <p class="hint">※ 오늘 승리 로그(updown_game_logs) 기준</p>
     </section>
 
@@ -92,6 +98,7 @@
         </div>
       </div>
 
+      <!-- PC: 표 -->
       <div class="tableWrap">
         <table>
           <thead>
@@ -107,12 +114,18 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Mobile: 카드 -->
+      <div class="cardList" id="diffCards"></div>
+
       <p class="hint">※ 난이도별 승리 로그 기준</p>
     </section>
 
     <!-- 전체 TOP10(플레이어 요약) -->
     <section class="card full">
       <h2>🏅 전체 TOP 10</h2>
+
+      <!-- PC: 표 -->
       <div class="tableWrap">
         <table>
           <thead>
@@ -129,12 +142,18 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Mobile: 카드 -->
+      <div class="cardList" id="overallCards"></div>
+
       <p class="hint">※ updown_players 기준</p>
     </section>
 
     <!-- 최근 10게임 로그 -->
     <section class="card full">
       <h2>🧾 최근 10게임 로그</h2>
+
+      <!-- PC: 표 -->
       <div class="tableWrap">
         <table>
           <thead>
@@ -152,6 +171,10 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Mobile: 카드 -->
+      <div class="cardList" id="recentCards"></div>
+
       <p class="hint">※ updown_game_logs 최신순</p>
     </section>
 
@@ -172,3 +195,5 @@
   <script type="module" src="app.js"></script>
 </body>
 </html>
+
+
